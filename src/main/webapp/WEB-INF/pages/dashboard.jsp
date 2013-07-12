@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <html>
 <head>
 	<link rel="stylesheet" type="text/css" href="<c:url value="/css/styles.css" />"/>
@@ -12,10 +13,10 @@
 		<div class="endpointList">
 			<div><div>Endpoint</div><div>Is Healthy</div></div>
 			<c:forEach items="${endpoints}" var="endpoint">
-			<div>
-				<div><a href="${endpoint.endpoint}">${endpoint.endpoint}</a></div>
-				<div>${endpoint.isHealthy}</div>
-			</div>
+				<div>
+					<div><a href="${endpoint.endpoint}">${endpoint.endpoint}</a></div>
+					<div>${endpoint.isHealthy}</div>
+				</div>
 			</c:forEach>
 		</div>
 		<div class="emailList">

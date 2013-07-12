@@ -5,13 +5,14 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.photolude.monitoring.amiss.logic.EndpointHealth;
 import com.photolude.monitoring.amiss.logic.MonitorManagement;
 
 @Controller
 @RequestMapping("/dashboard")
 public class DashboardController implements Runnable 
 {
-	private static Thread thread = new Thread();
+	private Thread thread = new Thread();
 	private MonitorManagement monitor;
 	public MonitorManagement getMonitor(){ return this.monitor; }
 	public void setMonitor(MonitorManagement value)
@@ -28,20 +29,21 @@ public class DashboardController implements Runnable
 
 	public DashboardController() 
 	{
-		if(!thread.isAlive())
-		{
-			thread = new Thread(this);
-			thread.start();
-		}
+		
+		thread = new Thread(this);
+		thread.start();
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String printWelcome(ModelMap model)
 	{
+		EndpointHealth[] endpoints;
 		synchronized(this.monitor)
 		{
-			model.addAttribute("endpoints", this.monitor.getEndpointHealth());
+			endpoints =  this.monitor.getEndpointHealth();
 		}
+		
+		model.addAttribute("endpoints", endpoints);
 		
 		model.addAttribute("emails", this.monitor.getNotifyEmails());
 		

@@ -10,30 +10,32 @@
         http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-	<bean      class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
     <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
 	
-	<bean class="com.photolude.monitoring.amiss.controller.DashboardController">
+    <bean id="Monitor" class="com.photolude.monitoring.amiss.logic.MonitorManagement">
+	    <property name="httpClient">
+	        <bean class="com.photolude.monitoring.amiss.clients.WebHttpClient"/>
+	    </property>
+	    <property name="mailClient">
+	        <bean class="com.photolude.monitoring.amiss.clients.SmtpMailClient">
+	            <property name="host"><value>${smtp.host}</value></property>
+	            <property name="userName"><value>${smtp.user}</value></property>
+	            <property name="password"><value>${smtp.password}</value></property>
+	            <property name="from"><value>${smtp.user}</value></property>
+	        </bean>
+	    </property>
+	    <property name="urls">
+			<value>${url.array}</value>
+	    </property>
+	    <property name="notifyEmails">
+	        <value>${notifyuser.array}</value>
+	    </property>
+	</bean>
+    
+	<bean class="com.photolude.monitoring.amiss.controller.DashboardController" scope="singleton">
 	    <property name="monitor">
-	        <bean id="Monitor" class="com.photolude.monitoring.amiss.logic.MonitorManagement">
-			    <property name="httpClient">
-			        <bean class="com.photolude.monitoring.amiss.clients.WebHttpClient"/>
-			    </property>
-			    <property name="mailClient">
-			        <bean class="com.photolude.monitoring.amiss.clients.SmtpMailClient">
-			            <property name="host"><value>${smtp.host}</value></property>
-			            <property name="userName"><value>${smtp.user}</value></property>
-			            <property name="password"><value>${smtp.password}</value></property>
-			            <property name="from"><value>${smtp.user}</value></property>
-			        </bean>
-			    </property>
-			    <property name="urls">
-					<value>${url.array}</value>
-			    </property>
-			    <property name="notifyEmails">
-			        <value>${notifyuser.array}</value>
-			    </property>
-			</bean>
+	        <ref bean="Monitor"/>
 	    </property>
 	    <property name="refreshDuration"><value>30000</value></property>
 	</bean>
@@ -41,8 +43,7 @@
 	<mvc:resources mapping="/css/**" location="/WEB-INF/css/" /> 
   	<mvc:resources mapping="/scripts/**" location="/scripts/" />
 	
-	<bean
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix">
 			<value>/WEB-INF/pages/</value>
 		</property>
